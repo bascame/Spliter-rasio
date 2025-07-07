@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Jaringan FTTH BascameWifi (GPON & EPON)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .card {
+            background-color: rgba(235, 235, 251, 0.864);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+        }
+        .input-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.5rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: #fff;
+        }
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgb(59 130 246 / 0.3);
+        }
+        .result-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .status-box {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-weight: 600;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        .detail-item {
+            background-color: #F9FAFB;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #E5E7EB;
+        }
+        .detail-item .label {
+            font-size: 0.875rem;
+            color: #6B7280;
+        }
+        .detail-item .value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1F2937;
+        }
+        .unit-selector {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-6xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Kalkulator Jaringan FTTH</h1>
+            <p class="text-gray-600 mt-2">redaman untuk teknologi GPON & EPON.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Kolom Input -->
+            <div class="card">
+                <h2 class="text-xl font-semibold mb-4 border-b pb-2">Parameter Jaringan</h2>
+                
+                <div class="input-group">
+                    <label for="totalPelanggan">Total Calon Pelanggan</label>
+                    <input type="number" id="totalPelanggan" value="250">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="input-group">
+                        <label for="teknologiOlt">Teknologi OLT</label>
+                        <select id="teknologiOlt">
+                            <option value="GPON" selected>GPON</option>
+                            <option value="EPON">EPON</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="dayaOltClass">Kelas Daya OLT (Tx Power)</label>
+                        <select id="dayaOltClass"></select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="jarakKabel">Jarak Kabel Terjauh dari ODC</label>
+                     <div class="flex items-center">
+                        <input type="number" step="0.1" id="jarakKabel" value="3" class="w-full rounded-r-none">
+                        <select id="jarakUnit" class="bg-gray-200 border border-l-0 border-gray-300 rounded-l-none rounded-r-md focus:ring-0 focus:border-gray-300 unit-selector">
+                            <option value="km">Km</option>
+                            <option value="meter">Meter</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-semibold mt-6 mb-3">Topologi Splitter</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="input-group">
+                        <label for="splitterOdc">Splitter di ODC (Tahap 1)</label>
+                        <select id="splitterOdc">
+                            <option value="1:2">1:2</option>
+                            <option value="1:4">1:4</option>
+                            <option value="1:8" selected>1:8</option>
+                            <option value="1:16">1:16</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="splitterOdp">Splitter di ODP (Tahap 2)</label>
+                        <select id="splitterOdp">
+                            <option value="1:2">1:2</option>
+                            <option value="1:4">1:4</option>
+                            <option value="1:8" selected>1:8</option>
+                            <option value="1:16">1:16</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <details class="mt-4">
+                    <summary class="font-semibold cursor-pointer text-blue-600">Pengaturan Lanjutan (Redaman Pasif)</summary>
+                    <div class="mt-4 border-t pt-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="input-group">
+                                <label for="jumlahKonektor">Jumlah Konektor</label>
+                                <input type="number" id="jumlahKonektor" value="4">
+                            </div>
+                            <div class="input-group">
+                                <label for="jumlahSplicing">Jumlah Sambungan</label>
+                                <input type="number" id="jumlahSplicing" value="2">
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+            </div>
+
+            <!-- Kolom Hasil -->
+            <div class="card">
+                <h2 class="text-xl font-semibold mb-4 border-b pb-2">Hasil Kalkulasi</h2>
+
+                <div class="mb-4">
+                    <label class="font-medium text-gray-600">Status Sinyal</label>
+                    <div id="statusBox" class="status-box">
+                        -- Menghitung --
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="text-center bg-gray-100 p-4 rounded-lg">
+                        <label class="block font-medium text-gray-600">Perkiraan Sinyal di ONT</label>
+                        <p id="hasilSinyal" class="result-value text-blue-600">-</p>
+                    </div>
+                    <div class="text-center bg-gray-100 p-4 rounded-lg">
+                        <label class="block font-medium text-gray-600">Total Redaman</label>
+                        <p id="totalRedaman" class="result-value text-red-600">-</p>
+                    </div>
+                </div>
+                
+                <!-- Tabel Topologi Splitter per Tahap -->
+                <h3 class="text-lg font-semibold mb-3">Topologi Splitter per Tahap</h3>
+                <div class="details-grid mb-6">
+                    <div class="detail-item">
+                        <span class="label">Tahap 1 (ODC)</span>
+                        <p id="topoOdc" class="value">-</p>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Tahap 2 (ODP)</span>
+                        <p id="topoOdp" class="value">-</p>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Total Rasio</span>
+                        <p id="totalRasio" class="value">-</p>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-semibold mb-3">Rincian Kebutuhan Perangkat</h3>
+                <div class="details-grid mb-6">
+                    <div class="detail-item">
+                        <span class="label">Port OLT Aktif</span>
+                        <p id="kebutuhanOlt" class="value">-</p>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Jumlah ODP</span>
+                        <p id="kebutuhanOdp" class="value">-</p>
+                    </div>
+                </div>
+                
+                <h3 class="text-lg font-semibold mb-3">Rincian Redaman</h3>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="label">Splitter ODC</span>
+                        <p id="lossSplitterOdc" class="value">-</p>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Splitter ODP</span>
+                        <p id="lossSplitterOdp" class="value">-</p>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Kabel Fiber</span>
+                        <p id="lossKabel" class="value">-</p>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Konektor</span>
+                        <p id="lossKonektor" class="value">-</p>
+                    </div>
+                     <div class="detail-item">
+                        <span class="label">Splicing</span>
+                        <p id="lossSplicing" class="value">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="text-center mt-8 text-sm text-gray-500">
+            <p>Kalkulator ini memberikan estimasi berdasarkan nilai redaman standar industri. Hasil aktual di lapangan dapat bervariasi.</p>
+        </footer>
+         <footer class="text-center mt-8 text-sm text-gray-500">
+            <p>powerBy:BascameWifi 2025</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // --- DATA KONSTAN ---
+        const techConfig = {
+            'GPON': {
+                classes: {
+                    'Class B+': 5,
+                    'Class C+': 7,
+                    'Class C++': 9
+                },
+                sensitivity: -28
+            },
+            'EPON': {
+                classes: {
+                    'PX20+': 4,
+                    'PX20++': 7
+                },
+                sensitivity: -27
+            }
+        };
+        const splitterLoss = {
+            '1:2': 3.4, '1:4': 7.4, '1:8': 10.5, '1:16': 13.8,
+        };
+        const lossPerKm = 0.35;
+        const lossPerConnector = 0.25;
+        const lossPerSplicing = 0.1;
+
+        // --- ELEMEN DOM ---
+        const inputs = document.querySelectorAll('input, select');
+        const totalPelangganEl = document.getElementById('totalPelanggan');
+        const teknologiOltEl = document.getElementById('teknologiOlt');
+        const dayaOltClassEl = document.getElementById('dayaOltClass');
+        const jarakKabelEl = document.getElementById('jarakKabel');
+        const jarakUnitEl = document.getElementById('jarakUnit');
+        const splitterOdcEl = document.getElementById('splitterOdc');
+        const splitterOdpEl = document.getElementById('splitterOdp');
+        const jumlahKonektorEl = document.getElementById('jumlahKonektor');
+        const jumlahSplicingEl = document.getElementById('jumlahSplicing');
+        const statusBoxEl = document.getElementById('statusBox');
+        const hasilSinyalEl = document.getElementById('hasilSinyal');
+        const totalRedamanEl = document.getElementById('totalRedaman');
+        const topoOdcEl = document.getElementById('topoOdc');
+        const topoOdpEl = document.getElementById('topoOdp');
+        const totalRasioEl = document.getElementById('totalRasio');
+        const kebutuhanOltEl = document.getElementById('kebutuhanOlt');
+        const kebutuhanOdpEl = document.getElementById('kebutuhanOdp');
+        const lossSplitterOdcEl = document.getElementById('lossSplitterOdc');
+        const lossSplitterOdpEl = document.getElementById('lossSplitterOdp');
+        const lossKabelEl = document.getElementById('lossKabel');
+        const lossKonektorEl = document.getElementById('lossKonektor');
+        const lossSplicingEl = document.getElementById('lossSplicing');
+
+        // --- FUNGSI ---
+        function updateOltOptions() {
+            const selectedTech = teknologiOltEl.value;
+            const powerClasses = techConfig[selectedTech].classes;
+            
+            dayaOltClassEl.innerHTML = ''; // Kosongkan pilihan lama
+            
+            for (const className in powerClasses) {
+                const option = document.createElement('option');
+                option.value = powerClasses[className];
+                option.textContent = `${className} (~${powerClasses[className]} dBm)`;
+                dayaOltClassEl.appendChild(option);
+            }
+        }
+
+        function calculate() {
+            // 1. Ambil semua nilai dari input
+            const totalPelanggan = parseInt(totalPelangganEl.value) || 0;
+            const selectedTech = teknologiOltEl.value;
+            const dayaOlt = parseFloat(dayaOltClassEl.value) || 0;
+            const rxSensitivity = techConfig[selectedTech].sensitivity;
+            
+            let jarakKabel = parseFloat(jarakKabelEl.value) || 0;
+            const jarakUnit = jarakUnitEl.value;
+            
+            const splitterOdcVal = splitterOdcEl.value;
+            const splitterOdpVal = splitterOdpEl.value;
+            const jumlahKonektor = parseInt(jumlahKonektorEl.value) || 0;
+            const jumlahSplicing = parseInt(jumlahSplicingEl.value) || 0;
+
+            if (jarakUnit === 'meter') {
+                jarakKabel = jarakKabel / 1000;
+            }
+
+            // 2. Hitung semua redaman
+            const lossOdc = splitterLoss[splitterOdcVal] || 0;
+            const lossOdp = splitterLoss[splitterOdpVal] || 0;
+            const totalLossSplitter = lossOdc + lossOdp;
+            const totalLossKabel = jarakKabel * lossPerKm;
+            const totalLossKonektor = jumlahKonektor * lossPerConnector;
+            const totalLossSplicing = jumlahSplicing * lossPerSplicing;
+            const totalLoss = totalLossSplitter + totalLossKabel + totalLossKonektor + totalLossSplicing;
+            
+            // 3. Hitung sinyal akhir
+            const sinyalDiOnt = dayaOlt - totalLoss;
+
+            // 4. Hitung kebutuhan perangkat & topologi
+            const rasioOdc = parseInt(splitterOdcVal.split(':')[1]);
+            const rasioOdp = parseInt(splitterOdpVal.split(':')[1]);
+            const totalRasio = rasioOdc * rasioOdp;
+            const kebutuhanOdp = Math.ceil(totalPelanggan / rasioOdp) || 0;
+            const kebutuhanOlt = Math.ceil(totalPelanggan / totalRasio) || 0;
+
+            // 5. Update UI
+            hasilSinyalEl.innerText = `${sinyalDiOnt.toFixed(2)} dBm`;
+            totalRedamanEl.innerText = `${totalLoss.toFixed(2)} dB`;
+            
+            topoOdcEl.innerText = splitterOdcVal;
+            topoOdpEl.innerText = splitterOdpVal;
+            totalRasioEl.innerText = `1:${totalRasio}`;
+
+            kebutuhanOltEl.innerText = `${kebutuhanOlt} Port`;
+            kebutuhanOdpEl.innerText = `${kebutuhanOdp} Unit`;
+            
+            lossSplitterOdcEl.innerText = `${lossOdc.toFixed(2)} dB`;
+            lossSplitterOdpEl.innerText = `${lossOdp.toFixed(2)} dB`;
+            lossKabelEl.innerText = `${totalLossKabel.toFixed(2)} dB`;
+            lossKonektorEl.innerText = `${totalLossKonektor.toFixed(2)} dB`;
+            lossSplicingEl.innerText = `${totalLossSplicing.toFixed(2)} dB`;
+
+            // 6. Update status box
+            statusBoxEl.classList.remove('bg-green-500', 'bg-emerald-500', 'bg-yellow-500', 'bg-orange-600', 'bg-red-600');
+            if (sinyalDiOnt > -22) {
+                statusBoxEl.innerText = 'Sangat Stabil';
+                statusBoxEl.classList.add('bg-emerald-500');
+            } else if (sinyalDiOnt > -25) {
+                statusBoxEl.innerText = 'Stabil & Ideal';
+                statusBoxEl.classList.add('bg-green-500');
+            } else if (sinyalDiOnt > rxSensitivity) {
+                statusBoxEl.innerText = 'Batas Aman';
+                statusBoxEl.classList.add('bg-yellow-500');
+            } else if (sinyalDiOnt > rxSensitivity - 1.5) {
+                statusBoxEl.innerText = 'Berbahaya';
+                statusBoxEl.classList.add('bg-orange-600');
+            } else {
+                statusBoxEl.innerText = 'Sinyal Habis / Tidak Stabil';
+                statusBoxEl.classList.add('bg-red-600');
+            }
+        }
+
+        // --- EVENT LISTENERS ---
+        teknologiOltEl.addEventListener('change', () => {
+            updateOltOptions();
+            calculate();
+        });
+
+        inputs.forEach(input => {
+            if(input.id !== 'teknologiOlt') { // Hindari duplikasi event listener
+                input.addEventListener('input', calculate);
+            }
+        });
+
+        // --- PANGGILAN AWAL ---
+        window.onload = () => {
+            updateOltOptions();
+            calculate();
+        };
+
+    </script>
+</body>
+</html>
